@@ -153,6 +153,7 @@ def main():
                 type=["mp4", "mov", "avi", "mkv"]
             )
 
+        st.text("Scroll down for result \u2193")
         draw_box = st.checkbox("Draw bounding box", value=False)
 
         if uploaded_file is not None:
