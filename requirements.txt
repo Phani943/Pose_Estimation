@@ -1,6 +1,5 @@
-opencv-contrib-python==4.10.0.84
+opencv-python==4.5.4.60
 mediapipe==0.10.14
 tensorflow==2.15.1
 streamlit==1.27.2
 numpy==1.25.2
-opencv-python==4.5.4.60
