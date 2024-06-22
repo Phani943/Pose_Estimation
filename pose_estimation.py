@@ -182,7 +182,6 @@ def main():
                 processed_image = process_frame(image, pose, draw_box)
 
                 st.image(processed_image, channels='BGR', use_column_width=True)
-            os.remove(file_path)
             del uploaded_file
             del temp_file
             del pose
