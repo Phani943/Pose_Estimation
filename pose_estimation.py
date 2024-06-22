@@ -47,7 +47,7 @@ def draw_landmarks(img, landmarks):
     height, width, _ = img.shape
     for lm in landmarks.landmark:
         cx, cy = int(lm.x * width), int(lm.y * height)
-        cv2.circle(img, (cx, cy), 3, (0, 0, 255), -1)
+        cv2.circle(img, (cx, cy), 4, (0, 0, 255), -1)
 
     for connection in POSE_CONNECTIONS:
         start_idx, end_idx = connection
@@ -58,7 +58,7 @@ def draw_landmarks(img, landmarks):
             start_coordinates = (int(start_point.x * width), int(start_point.y * height))
             end_coordinates = (int(end_point.x * width), int(end_point.y * height))
 
-            cv2.line(img, start_coordinates, end_coordinates, (0, 255, 0), 1)
+            cv2.line(img, start_coordinates, end_coordinates, (0, 255, 0), 2)
 
     return img
 
