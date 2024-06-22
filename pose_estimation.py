@@ -1,3 +1,4 @@
+import gc
 import cv2
 import tempfile
 import numpy as np
@@ -159,28 +160,38 @@ def main():
                 temp_file.write(uploaded_file.read())
                 file_path = temp_file.name
 
-            if input_type == "Video":
-                cam = cv2.VideoCapture(file_path)
-                st_frame = st.empty()
-
-                while cam.isOpened():
-                    success, frame = cam.read()
-                    if not success:
-                        break
-
-                    frame = process_frame(frame, pose, draw_box)
-
-                    st_frame.image(frame, channels='BGR', use_column_width=True)
-                    st.empty()
-
-                st.text("Completed")
-                cam.release()
-
-            elif input_type == "Image":
-                image = cv2.imread(file_path)
-                processed_image = process_frame(image, pose, draw_box)
-
-                st.image(processed_image, channels='BGR', use_column_width=True)
+            try:
+                if input_type == "Video":
+                    cam = cv2.VideoCapture(file_path)
+                    st_frame = st.empty()
+    
+                    while cam.isOpened():
+                        success, frame = cam.read()
+                        if not success:
+                            break
+    
+                        frame = process_frame(frame, pose, draw_box)
+    
+                        st_frame.image(frame, channels='BGR', use_column_width=True)
+                        st.empty()
+    
+                    st.text("Completed")
+                    cam.release()
+    
+                elif input_type == "Image":
+                    image = cv2.imread(file_path)
+                    processed_image = process_frame(image, pose, draw_box)
+    
+                    st.image(processed_image, channels='BGR', use_column_width=True)
+            finally:
+                os.remove(file_path)
+                del uploaded_file
+                del temp_file
+                del pose
+                del frame
+                del image
+                del processed_image
+                gc.collect()
 
     elif operation_type == "Demo":
         st.empty()
@@ -203,6 +214,10 @@ def main():
 
         st.text("Completed")
         cam.release()
+        del cam
+        del frame
+        del pose
+        gc.collect()
 
 
 if __name__ == "__main__":
