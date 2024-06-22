@@ -182,12 +182,7 @@ def main():
                 processed_image = process_frame(image, pose, draw_box)
 
                 st.image(processed_image, channels='BGR', use_column_width=True)
-            del uploaded_file
-            del temp_file
-            del pose
-            del frame
-            del image
-            del processed_image
+
             gc.collect()
 
     elif operation_type == "Demo":
@@ -211,9 +206,6 @@ def main():
 
         st.text("Completed")
         cam.release()
-        del cam
-        del frame
-        del pose
         gc.collect()
 
 
