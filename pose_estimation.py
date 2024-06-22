@@ -1,5 +1,5 @@
-import gc
 import cv2
+import time
 import tempfile
 import numpy as np
 import mediapipe as mp
@@ -47,7 +47,7 @@ def draw_landmarks(img, landmarks):
     height, width, _ = img.shape
     for lm in landmarks.landmark:
         cx, cy = int(lm.x * width), int(lm.y * height)
-        cv2.circle(img, (cx, cy), 8, (0, 0, 255), -1)
+        cv2.circle(img, (cx, cy), 3, (0, 0, 255), -1)
 
     for connection in POSE_CONNECTIONS:
         start_idx, end_idx = connection
@@ -58,7 +58,7 @@ def draw_landmarks(img, landmarks):
             start_coordinates = (int(start_point.x * width), int(start_point.y * height))
             end_coordinates = (int(end_point.x * width), int(end_point.y * height))
 
-            cv2.line(img, start_coordinates, end_coordinates, (0, 255, 0), 3)
+            cv2.line(img, start_coordinates, end_coordinates, (0, 255, 0), 1)
 
     return img
 
@@ -137,6 +137,8 @@ def main():
 
     operation_type = st.radio("Choose operation type", ("Input", "Demo"))
 
+    pose = mp_pose.Pose()
+
     if operation_type == "Input":
         input_type = st.radio("Choose input type", ("Image", "Video"))
 
@@ -152,8 +154,6 @@ def main():
             )
 
         draw_box = st.checkbox("Draw bounding box", value=False)
-
-        pose = mp_pose.Pose()
 
         if uploaded_file is not None:
             with tempfile.NamedTemporaryFile(delete=False) as temp_file:
@@ -172,6 +172,7 @@ def main():
                     frame = process_frame(frame, pose, draw_box)
 
                     st_frame.image(frame, channels='BGR', use_column_width=True)
+                    time.sleep(1)
                     st.empty()
 
                 st.text("Completed")
@@ -183,30 +184,17 @@ def main():
 
                 st.image(processed_image, channels='BGR', use_column_width=True)
 
-            gc.collect()
-
     elif operation_type == "Demo":
         st.empty()
         st.markdown("<p class='intro'>Demo video will be shown below:</p>", unsafe_allow_html=True)
 
-        demo_video_path = "Videos/video.mp4"
-        cam = cv2.VideoCapture(demo_video_path)
-        st_frame = st.empty()
-        pose = mp_pose.Pose()
+        demo_image_path = "Images/demo.jpg"
 
-        while cam.isOpened():
-            success, frame = cam.read()
-            if not success:
-                break
+        image = cv2.imread(demo_image_path)
+        processed_image = process_frame(image, pose, draw_box=False)
 
-            frame = process_frame(frame, pose, draw_box=False)
-
-            st_frame.image(frame, channels='BGR', use_column_width=True)
-            st.empty()
-
-        st.text("Completed")
-        cam.release()
-        gc.collect()
+        st.image(processed_image, channels='BGR', use_column_width=True)
+        st.text("Done")
 
 
 if __name__ == "__main__":
